@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  AGENT
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  INTERESTED
+  FOLLOW_UP
+  CONVERTED
+  NOT_INTERESTED
+}
+
+model User {
+  id         String         @id @default(uuid())
+  name       String
+  email      String         @unique
+  password   String
+  role       Role
+  status     Status         @default(ACTIVE)
+  leads      Lead[]
+  activities LeadActivity[]
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  @@index([role])
+}
+
+model Lead {
+  id             String         @id @default(uuid())
+  customerName   String
+  phone          String
+  source         String?
+  assignedTo     String
+  status         LeadStatus     @default(NEW)
+  lastActivityAt DateTime?
+  user           User           @relation(fields: [assignedTo], references: [id])
+  activities     LeadActivity[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@index([assignedTo])
+  @@index([status])
+}
+
+model LeadActivity {
+  id        String      @id @default(uuid())
+  leadId    String
+  agentId   String
+  status    LeadStatus
+  remarks   String?
+  value     Float?
+  followUp  DateTime?
+  lead      Lead        @relation(fields: [leadId], references: [id])
+  agent     User        @relation(fields: [agentId], references: [id])
+  createdAt DateTime    @default(now())
+
+  @@index([leadId])
+  @@index([agentId])
+}
