@@ -1,20 +1,38 @@
 import { useEffect, useState } from "react";
 
 const statusOptions = [
-  "NEW",
-  "CONTACTED",
-  "INTERESTED",
-  "FOLLOW_UP",
-  "CONVERTED",
-  "NOT_INTERESTED"
+  { value: "INITIAL_CONTACT", label: "Initial Contact" },
+  { value: "COLD", label: "Cold" },
+  { value: "WARM", label: "Warm" },
+  { value: "WAITING_FOR_LOCATION", label: "Waiting for location" },
+  { value: "WON", label: "Won" },
+  { value: "NEGOTIATIONS", label: "Negotiations" },
+  { value: "LOST", label: "Lost" },
+  { value: "FOLLOW_UP", label: "Follow-Up" },
+  { value: "DATE_SHIPMENT", label: "Date shipment" },
+  { value: "CANCELLED", label: "Cancelled" }
 ];
+
+const statusLabelMap = statusOptions.reduce((accumulator, option) => {
+  accumulator[option.value] = option.label;
+  return accumulator;
+}, {});
 
 const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
   const [leads, setLeads] = useState([]);
   const [selectedLead, setSelectedLead] = useState(null);
-  const [status, setStatus] = useState("NEW");
+  const [status, setStatus] = useState("INITIAL_CONTACT");
   const [remarks, setRemarks] = useState("");
+  const [phone2, setPhone2] = useState("");
+  const [country, setCountry] = useState("");
+  const [product, setProduct] = useState("");
+  const [qty, setQty] = useState("");
+  const [notes, setNotes] = useState("");
+  const [city, setCity] = useState("");
+  const [address, setAddress] = useState("");
   const [value, setValue] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [shipmentDate, setShipmentDate] = useState("");
   const [followUp, setFollowUp] = useState("");
   const [error, setError] = useState("");
 
@@ -41,9 +59,20 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
 
   const openModal = (lead) => {
     setSelectedLead(lead);
-    setStatus(lead.status || "NEW");
+    setStatus(lead.status || "INITIAL_CONTACT");
     setRemarks("");
-    setValue("");
+    setPhone2(lead.phone2 || "");
+    setCountry(lead.country || "");
+    setProduct(lead.product || "");
+    setQty(lead.qty ?? "");
+    setNotes(lead.notes || "");
+    setCity(lead.city || "");
+    setAddress(lead.address || "");
+    setValue(lead.value ?? "");
+    setPaymentMethod(lead.paymentMethod || "");
+    setShipmentDate(
+      lead.shipmentDate ? lead.shipmentDate.slice(0, 10) : ""
+    );
     setFollowUp("");
   };
 
@@ -56,6 +85,22 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
       return;
     }
 
+    if (status === "WON") {
+      const missingFields = [];
+      if (!product) missingFields.push("Product");
+      if (!qty) missingFields.push("Qty");
+      if (!notes) missingFields.push("Notes");
+      if (!city) missingFields.push("City");
+      if (!address) missingFields.push("Address");
+      if (!value) missingFields.push("Value");
+      if (!paymentMethod) missingFields.push("Payment Method");
+
+      if (missingFields.length > 0) {
+        setError(`Fill required fields for Won: ${missingFields.join(", ")}`);
+        return;
+      }
+    }
+
     try {
       const response = await fetch(
         `${apiBaseUrl}/leads/${selectedLead.id}/activity`,
@@ -65,7 +110,16 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
           body: JSON.stringify({
             status,
             remarks,
+            phone2,
+            country,
+            product,
+            qty: qty ? Number(qty) : null,
+            notes,
+            city,
+            address,
             value: value ? Number(value) : null,
+            paymentMethod,
+            shipmentDate: shipmentDate || null,
             followUp: followUp || null
           })
         }
@@ -132,6 +186,7 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
           <tr>
             <th>Customer</th>
             <th>Phone</th>
+            <th>Country</th>
             <th>Status</th>
             <th>Assigned</th>
             <th>Actions</th>
@@ -142,8 +197,11 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
             <tr key={lead.id}>
               <td>{lead.customerName}</td>
               <td>{lead.phone}</td>
+              <td>{lead.country || "-"}</td>
               <td>
-                <span className="badge">{lead.status}</span>
+                <span className="badge">
+                  {statusLabelMap[lead.status] || lead.status}
+                </span>
               </td>
               <td>{lead.user?.name || "You"}</td>
               <td>
@@ -170,11 +228,68 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
                   onChange={(event) => setStatus(event.target.value)}
                 >
                   {statusOptions.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
+                    <option key={option.value} value={option.value}>
+                      {option.label}
                     </option>
                   ))}
                 </select>
+              </label>
+              <label className="stack">
+                <span>Phone 2 (optional)</span>
+                <input
+                  className="input"
+                  value={phone2}
+                  onChange={(event) => setPhone2(event.target.value)}
+                />
+              </label>
+              <label className="stack">
+                <span>Country</span>
+                <input
+                  className="input"
+                  value={country}
+                  onChange={(event) => setCountry(event.target.value)}
+                />
+              </label>
+              <label className="stack">
+                <span>Product</span>
+                <input
+                  className="input"
+                  value={product}
+                  onChange={(event) => setProduct(event.target.value)}
+                />
+              </label>
+              <label className="stack">
+                <span>Qty</span>
+                <input
+                  className="input"
+                  type="number"
+                  value={qty}
+                  onChange={(event) => setQty(event.target.value)}
+                />
+              </label>
+              <label className="stack">
+                <span>Notes</span>
+                <input
+                  className="input"
+                  value={notes}
+                  onChange={(event) => setNotes(event.target.value)}
+                />
+              </label>
+              <label className="stack">
+                <span>City</span>
+                <input
+                  className="input"
+                  value={city}
+                  onChange={(event) => setCity(event.target.value)}
+                />
+              </label>
+              <label className="stack">
+                <span>Address</span>
+                <input
+                  className="input"
+                  value={address}
+                  onChange={(event) => setAddress(event.target.value)}
+                />
               </label>
               <label className="stack">
                 <span>Remarks</span>
@@ -186,12 +301,29 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
                 />
               </label>
               <label className="stack">
-                <span>Conversion Value</span>
+                <span>Value</span>
                 <input
                   className="input"
                   type="number"
                   value={value}
                   onChange={(event) => setValue(event.target.value)}
+                />
+              </label>
+              <label className="stack">
+                <span>Payment Method</span>
+                <input
+                  className="input"
+                  value={paymentMethod}
+                  onChange={(event) => setPaymentMethod(event.target.value)}
+                />
+              </label>
+              <label className="stack">
+                <span>Date shipment</span>
+                <input
+                  className="input"
+                  type="date"
+                  value={shipmentDate}
+                  onChange={(event) => setShipmentDate(event.target.value)}
                 />
               </label>
               <label className="stack">

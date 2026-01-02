@@ -18,12 +18,16 @@ enum Status {
 }
 
 enum LeadStatus {
-  NEW
-  CONTACTED
-  INTERESTED
+  INITIAL_CONTACT
+  COLD
+  WARM
+  WAITING_FOR_LOCATION
+  WON
+  NEGOTIATIONS
+  LOST
   FOLLOW_UP
-  CONVERTED
-  NOT_INTERESTED
+  DATE_SHIPMENT
+  CANCELLED
 }
 
 model User {
@@ -45,9 +49,19 @@ model Lead {
   id            String         @id @default(uuid())
   customerName  String
   phone         String
+  phone2        String?
   source        String?
+  country       String?
+  product       String?
+  qty           Int?
+  notes         String?
+  city          String?
+  address       String?
+  value         Float?
+  paymentMethod String?
+  shipmentDate  DateTime?
   assignedTo    String
-  status        LeadStatus     @default(NEW)
+  status        LeadStatus     @default(INITIAL_CONTACT)
   lastActivityAt DateTime?
   user          User           @relation(fields: [assignedTo], references: [id])
   activities    LeadActivity[]

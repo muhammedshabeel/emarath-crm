@@ -40,9 +40,9 @@ const AdminAnalytics = ({ apiBaseUrl, headers }) => {
             <p className="muted">All active leads in the system.</p>
           </div>
           <div className="card">
-            <h3>Converted</h3>
-            <p>{metrics.convertedLeads}</p>
-            <p className="muted">Deals marked as converted.</p>
+            <h3>Won</h3>
+            <p>{metrics.wonLeads}</p>
+            <p className="muted">Orders marked as won.</p>
           </div>
           <div className="card">
             <h3>Follow-ups</h3>
@@ -50,9 +50,9 @@ const AdminAnalytics = ({ apiBaseUrl, headers }) => {
             <p className="muted">Leads requiring follow-up.</p>
           </div>
           <div className="card">
-            <h3>New Leads</h3>
-            <p>{metrics.newLeads}</p>
-            <p className="muted">Fresh entries assigned.</p>
+            <h3>Initial Contact</h3>
+            <p>{metrics.initialLeads}</p>
+            <p className="muted">Leads in initial contact stage.</p>
           </div>
           <div className="card">
             <h3>Active Agents</h3>
