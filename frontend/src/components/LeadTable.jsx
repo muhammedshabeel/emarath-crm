@@ -87,7 +87,6 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
   const [phone2, setPhone2] = useState("");
   const [country, setCountry] = useState("");
   const [productQuantities, setProductQuantities] = useState({});
-  const [productMenuOpen, setProductMenuOpen] = useState(false);
   const [productSearch, setProductSearch] = useState("");
   const [notes, setNotes] = useState("");
   const [city, setCity] = useState("");
@@ -138,7 +137,6 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
       return accumulator;
     }, {});
     setProductQuantities(quantities);
-    setProductMenuOpen(false);
     setProductSearch("");
     setNotes(lead.notes || "");
     setCity(lead.city || "");
@@ -153,7 +151,6 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
 
   const closeModal = () => {
     setSelectedLead(null);
-    setProductMenuOpen(false);
   };
 
   const submitUpdate = async () => {
@@ -375,87 +372,63 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
 
                 <div className="modal-section stack">
                   <div className="section-title">Order</div>
-                  <label className="stack">
-                    <span>Products</span>
-                    <div className="product-dropdown">
-                      <button
-                        type="button"
-                        className="input product-trigger"
-                        onClick={() => setProductMenuOpen((prev) => !prev)}
-                      >
-                        <span>
-                          {selectedProductCount > 0
-                            ? `${selectedProductCount} selected · ${totalProductQty} qty`
-                            : "Select products"}
-                        </span>
-                        <span className="product-trigger-icon" aria-hidden="true">
-                          {productMenuOpen ? "▴" : "▾"}
-                        </span>
-                      </button>
-                      {productMenuOpen && (
-                        <div className="product-menu">
-                          <div className="product-menu-header">
-                            <input
-                              className="input"
-                              placeholder="Search products"
-                              value={productSearch}
-                              onChange={(event) =>
-                                setProductSearch(event.target.value)
-                              }
-                            />
-                            <div className="product-summary muted">
-                              {selectedProductCount} selected · {totalProductQty} qty
-                            </div>
-                            <div className="product-selected">
-                              {selectedProducts.length > 0 ? (
-                                selectedProducts.map(({ name, qtyValue }) => (
-                                  <span key={name} className="product-pill">
-                                    {name} × {qtyValue}
-                                  </span>
-                                ))
-                              ) : (
-                                <span className="muted">No products selected yet.</span>
-                              )}
-                            </div>
-                          </div>
-                          <div className="product-list">
-                            {filteredProducts.map((option) => {
-                              const qtyValue = productQuantities[option] || 0;
-                              return (
-                                <div key={option} className="product-row">
-                                  <span className="product-name">{option}</span>
-                                  <div className="product-qty">
-                                    <button
-                                      type="button"
-                                      className="button secondary"
-                                      onClick={() => updateProductQty(option, -1)}
-                                    >
-                                      -
-                                    </button>
-                                    <span className="product-qty-value">
-                                      {qtyValue}
-                                    </span>
-                                    <button
-                                      type="button"
-                                      className="button secondary"
-                                      onClick={() => updateProductQty(option, 1)}
-                                    >
-                                      +
-                                    </button>
-                                  </div>
-                                </div>
-                              );
-                            })}
-                            {filteredProducts.length === 0 && (
-                              <div className="product-empty muted">
-                                No products found.
-                              </div>
-                            )}
-                          </div>
+                  <div className="stack">
+                    <div className="section-title">Products & Qty</div>
+                    <div className="product-panel">
+                      <div className="product-panel-header">
+                        <input
+                          className="input"
+                          placeholder="Search products"
+                          value={productSearch}
+                          onChange={(event) => setProductSearch(event.target.value)}
+                        />
+                        <div className="product-summary muted">
+                          {selectedProductCount} selected · {totalProductQty} qty
                         </div>
-                      )}
+                        <div className="product-selected">
+                          {selectedProducts.length > 0 ? (
+                            selectedProducts.map(({ name, qtyValue }) => (
+                              <span key={name} className="product-pill">
+                                {name} × {qtyValue}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="muted">No products selected yet.</span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="product-list">
+                        {filteredProducts.map((option) => {
+                          const qtyValue = productQuantities[option] || 0;
+                          return (
+                            <div key={option} className="product-row">
+                              <span className="product-name">{option}</span>
+                              <div className="product-qty">
+                                <button
+                                  type="button"
+                                  className="button secondary"
+                                  onClick={() => updateProductQty(option, -1)}
+                                >
+                                  -
+                                </button>
+                                <span className="product-qty-value">{qtyValue}</span>
+                                <button
+                                  type="button"
+                                  className="button secondary"
+                                  onClick={() => updateProductQty(option, 1)}
+                                >
+                                  +
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                        {filteredProducts.length === 0 && (
+                          <div className="product-empty muted">No products found.</div>
+                        )}
+                      </div>
                     </div>
-                  </label>
+                  </div>
                   <div className="form-grid">
                     <label className="stack">
                       <span>Payment Method</span>
