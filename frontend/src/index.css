@@ -126,6 +126,26 @@ button {
   overflow-y: auto;
   padding-right: 4px;
   padding-bottom: 16px;
+  display: grid;
+  gap: 16px;
+}
+
+.modal-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.modal-section {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.section-title {
+  font-weight: 600;
+  color: #0f172a;
 }
 
 .stack {
@@ -175,6 +195,20 @@ button {
 
 .product-summary {
   font-size: 12px;
+}
+
+.product-selected {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.product-pill {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  color: #0f172a;
 }
 
 .product-list {
@@ -240,6 +274,10 @@ button {
 
   .product-menu {
     padding: 10px;
+  }
+
+  .modal-section {
+    padding: 14px;
   }
 }
 
