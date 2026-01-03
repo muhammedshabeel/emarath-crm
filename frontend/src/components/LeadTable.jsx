@@ -86,8 +86,7 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
   const [remarks, setRemarks] = useState("");
   const [phone2, setPhone2] = useState("");
   const [country, setCountry] = useState("");
-  const [product, setProduct] = useState([]);
-  const [qty, setQty] = useState("");
+  const [productQuantities, setProductQuantities] = useState({});
   const [notes, setNotes] = useState("");
   const [city, setCity] = useState("");
   const [address, setAddress] = useState("");
@@ -127,8 +126,16 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
     const selectedProducts = lead.product
       ? lead.product.split(",").map((item) => item.trim()).filter(Boolean)
       : [];
-    setProduct(selectedProducts);
-    setQty(lead.qty ?? "");
+    const quantities = selectedProducts.reduce((accumulator, entry) => {
+      const match = entry.match(/^(.*?)(?:\s+x(\d+))?$/);
+      const name = match?.[1]?.trim();
+      const qtyValue = match?.[2] ? Number(match[2]) : 1;
+      if (name) {
+        accumulator[name] = qtyValue || 1;
+      }
+      return accumulator;
+    }, {});
+    setProductQuantities(quantities);
     setNotes(lead.notes || "");
     setCity(lead.city || "");
     setAddress(lead.address || "");
@@ -150,9 +157,13 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
     }
 
     if (status === "WON") {
+      const totalQty = Object.values(productQuantities).reduce(
+        (sum, value) => sum + Number(value || 0),
+        0
+      );
       const missingFields = [];
-      if (product.length === 0) missingFields.push("Product");
-      if (!qty) missingFields.push("Qty");
+      if (Object.keys(productQuantities).length === 0) missingFields.push("Product");
+      if (!totalQty) missingFields.push("Qty");
       if (!notes) missingFields.push("Notes");
       if (!city) missingFields.push("City");
       if (!address) missingFields.push("Address");
@@ -166,7 +177,14 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
     }
 
     try {
-      const normalizedProducts = product.join(", ");
+      const normalizedProducts = Object.entries(productQuantities)
+        .filter(([, qtyValue]) => Number(qtyValue) > 0)
+        .map(([name, qtyValue]) => `${name} x${qtyValue}`)
+        .join(", ");
+      const totalQty = Object.values(productQuantities).reduce(
+        (sum, value) => sum + Number(value || 0),
+        0
+      );
       const response = await fetch(
         `${apiBaseUrl}/leads/${selectedLead.id}/activity`,
         {
@@ -178,7 +196,7 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
             phone2,
             country,
             product: normalizedProducts,
-            qty: qty ? Number(qty) : null,
+            qty: totalQty || null,
             notes,
             city,
             address,
@@ -202,20 +220,19 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
     }
   };
 
-  const toggleProduct = (value) => {
-    setProduct((prev) => {
-      if (prev.includes(value)) {
-        return prev.filter((item) => item !== value);
+  const updateProductQty = (name, delta) => {
+    setProductQuantities((prev) => {
+      const current = Number(prev[name] || 0);
+      const next = Math.max(0, current + delta);
+      if (next === 0) {
+        const { [name]: _removed, ...rest } = prev;
+        return rest;
       }
-      return [...prev, value];
+      return { ...prev, [name]: next };
     });
   };
 
-  const changeQty = (delta) => {
-    const current = Number(qty || 0);
-    const next = Math.max(0, current + delta);
-    setQty(next === 0 ? "" : next);
-  };
+  const selectedProductCount = Object.keys(productQuantities).length;
 
   const handleExport = async () => {
     const endpoint = isAdmin ? "all" : "my-leads";
@@ -322,55 +339,41 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
                   onChange={(event) => setPhone2(event.target.value)}
                 />
               </label>
-              <div className="form-grid">
-                <label className="stack">
-                  <span>Country</span>
-                  <input
-                    className="input"
-                    value={country}
-                    onChange={(event) => setCountry(event.target.value)}
-                  />
-                </label>
-                <label className="stack">
-                  <span>Qty</span>
-                  <div className="qty-control">
-                    <button
-                      type="button"
-                      className="button secondary"
-                      onClick={() => changeQty(-1)}
-                    >
-                      -
-                    </button>
-                    <input
-                      className="input"
-                      type="number"
-                      min="0"
-                      value={qty}
-                      onChange={(event) => setQty(event.target.value)}
-                    />
-                    <button
-                      type="button"
-                      className="button secondary"
-                      onClick={() => changeQty(1)}
-                    >
-                      +
-                    </button>
-                  </div>
-                </label>
-              </div>
               <label className="stack">
-                <span>Product (select multiple)</span>
-                <div className="product-grid">
-                  {productOptions.map((option) => (
-                    <button
-                      key={option}
-                      type="button"
-                      className={`product-chip${product.includes(option) ? " selected" : ""}`}
-                      onClick={() => toggleProduct(option)}
-                    >
-                      {option}
-                    </button>
-                  ))}
+                <span>Products (hover to select)</span>
+                <div className="product-dropdown">
+                  <button type="button" className="input product-trigger">
+                    {selectedProductCount > 0
+                      ? `${selectedProductCount} selected`
+                      : "Select products"}
+                  </button>
+                  <div className="product-menu">
+                    {productOptions.map((option) => {
+                      const qtyValue = productQuantities[option] || 0;
+                      return (
+                        <div key={option} className="product-row">
+                          <span className="product-name">{option}</span>
+                          <div className="product-qty">
+                            <button
+                              type="button"
+                              className="button secondary"
+                              onClick={() => updateProductQty(option, -1)}
+                            >
+                              -
+                            </button>
+                            <span className="product-qty-value">{qtyValue}</span>
+                            <button
+                              type="button"
+                              className="button secondary"
+                              onClick={() => updateProductQty(option, 1)}
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </label>
               <div className="form-grid">

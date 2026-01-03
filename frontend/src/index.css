@@ -139,21 +139,71 @@ button {
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
-.qty-control {
+.product-dropdown {
+  position: relative;
+}
+
+.product-trigger {
+  text-align: left;
+  background: #ffffff;
+}
+
+.product-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-height: 240px;
+  overflow-y: auto;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 16px 24px rgba(15, 23, 42, 0.12);
+  padding: 8px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-4px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 10;
+}
+
+.product-dropdown:hover .product-menu {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.product-row {
   display: grid;
-  grid-template-columns: 40px 1fr 40px;
-  gap: 8px;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 8px;
+  border-radius: 10px;
+}
+
+.product-row:hover {
+  background: #f8fafc;
+}
+
+.product-name {
+  font-size: 12px;
+}
+
+.product-qty {
+  display: grid;
+  grid-template-columns: 32px 32px 32px;
+  gap: 6px;
   align-items: center;
 }
 
-.qty-control .button {
-  padding: 8px 0;
+.product-qty .button {
+  padding: 6px 0;
 }
 
-.product-grid {
-  display: grid;
-  gap: 8px;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+.product-qty-value {
+  text-align: center;
+  font-size: 12px;
 }
 
 @media (max-width: 720px) {
@@ -162,28 +212,15 @@ button {
     padding: 20px;
   }
 
-  .qty-control {
-    grid-template-columns: 36px 1fr 36px;
+  .product-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
   }
 
-  .product-grid {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  .product-qty {
+    grid-template-columns: 32px 32px 32px;
+    justify-content: start;
   }
-}
-
-.product-chip {
-  border: 1px solid #cbd5f5;
-  border-radius: 999px;
-  background: #f8fafc;
-  padding: 8px 12px;
-  font-size: 12px;
-  text-align: left;
-}
-
-.product-chip.selected {
-  background: #1d4ed8;
-  border-color: #1d4ed8;
-  color: #ffffff;
 }
 
 .modal-actions {
