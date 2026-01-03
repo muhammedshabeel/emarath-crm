@@ -329,8 +329,13 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
       {selectedLead && (
         <div className="modal-backdrop" role="dialog" aria-modal="true">
           <div className="modal">
-            <h3>Update Lead</h3>
-            <p className="muted">{selectedLead.customerName}</p>
+            <div className="modal-header">
+              <div>
+                <h3 className="modal-title">Update Lead</h3>
+                <p className="muted modal-subtitle">{selectedLead.customerName}</p>
+              </div>
+              <div className="modal-pill muted">Lead update</div>
+            </div>
             <div className="modal-content">
               <div className="modal-grid">
                 <div className="modal-section stack">

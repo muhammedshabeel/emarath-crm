@@ -121,6 +121,29 @@ button {
   box-shadow: 0 20px 40px rgba(15, 23, 42, 0.2);
 }
 
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.modal-title {
+  margin: 0;
+}
+
+.modal-subtitle {
+  margin-top: 4px;
+}
+
+.modal-pill {
+  background: #e2e8f0;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
 .modal-content {
   max-height: min(72vh, 560px);
   overflow-y: auto;
@@ -260,6 +283,11 @@ button {
   .modal {
     width: min(96vw, 640px);
     padding: 20px;
+  }
+
+  .modal-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .product-row {
