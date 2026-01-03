@@ -447,7 +447,7 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
                   />
                 </label>
               </div>
-              <div className="actions">
+              <div className="actions modal-actions">
                 <button className="button" onClick={submitUpdate}>
                   Save Update
                 </button>
