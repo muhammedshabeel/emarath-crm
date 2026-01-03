@@ -11,6 +11,7 @@
 body {
   margin: 0;
   min-height: 100vh;
+  background: #eef2f7;
 }
 
 button {
@@ -18,16 +19,15 @@ button {
 }
 
 .login-shell {
-  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px;
-  background: #f1f5f9;
+  padding: 48px 24px;
 }
 
 .login-card {
-  width: min(92vw, 420px);
+  width: min(94vw, 420px);
   padding: 28px;
 }
 
@@ -40,29 +40,41 @@ button {
 }
 
 .app-shell {
-  max-width: 1200px;
+  max-width: 1120px;
   margin: 0 auto;
-  padding: 32px 24px 80px;
+  padding: 40px 24px 96px;
   min-height: 100vh;
 }
 
-.header {
+.page-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.page-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
-.header h1 {
+.page-title {
+  margin: 0 0 6px;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.page-subtitle {
   margin: 0;
-  font-size: 24px;
 }
 
 .card {
   background: #ffffff;
   border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  padding: 22px;
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.08);
 }
 
 .grid {
@@ -87,9 +99,29 @@ button {
 .table th,
 .table td {
   text-align: left;
-  padding: 12px 8px;
+  padding: 12px 10px;
   border-bottom: 1px solid #e2e8f0;
   font-size: 14px;
+}
+
+@media (max-width: 900px) {
+  .app-shell {
+    padding: 32px 20px 72px;
+  }
+
+  .page-title {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 640px) {
+  .login-shell {
+    padding: 32px 16px;
+  }
+
+  .card {
+    padding: 18px;
+  }
 }
 
 .badge {

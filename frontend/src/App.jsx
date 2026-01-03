@@ -72,16 +72,16 @@ const App = () => {
   }
 
   return (
-    <div className="app-shell">
-      <div className="header">
-        <div>
-          <h1>Emarath Sales Portal</h1>
-          <p className="muted">
-            Logged in as {user.name} ({user.role.toLowerCase()})
-          </p>
-        </div>
-        <button className="button secondary" onClick={handleLogout}>
-          Logout
+      <div className="app-shell page-shell">
+        <div className="page-header">
+          <div>
+            <h1 className="page-title">Emarath Sales Portal</h1>
+            <p className="muted page-subtitle">
+              Logged in as {user.name} ({user.role.toLowerCase()})
+            </p>
+          </div>
+          <button className="button secondary" onClick={handleLogout}>
+            Logout
         </button>
       </div>
 
