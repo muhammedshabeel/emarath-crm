@@ -10,19 +10,43 @@ router.use(authenticate);
 router.get("/my", async (req, res) => {
   const leads = await prisma.lead.findMany({
     where: { assignedTo: req.user.id },
+    include: {
+      activities: {
+        orderBy: { createdAt: "desc" },
+        take: 1,
+        select: { followUp: true }
+      }
+    },
     orderBy: { createdAt: "desc" }
   });
 
-  return res.json(leads);
+  return res.json(
+    leads.map(({ activities, ...lead }) => ({
+      ...lead,
+      followUp: activities[0]?.followUp ?? null
+    }))
+  );
 });
 
 router.get("/", requireRole("ADMIN"), async (req, res) => {
   const leads = await prisma.lead.findMany({
-    include: { user: true },
+    include: {
+      user: true,
+      activities: {
+        orderBy: { createdAt: "desc" },
+        take: 1,
+        select: { followUp: true }
+      }
+    },
     orderBy: { createdAt: "desc" }
   });
 
-  return res.json(leads);
+  return res.json(
+    leads.map(({ activities, ...lead }) => ({
+      ...lead,
+      followUp: activities[0]?.followUp ?? null
+    }))
+  );
 });
 
 router.post("/", requireRole("ADMIN"), async (req, res) => {
