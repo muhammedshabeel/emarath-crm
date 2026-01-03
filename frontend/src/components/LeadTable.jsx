@@ -296,38 +296,40 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
 
       {error && !selectedLead && <div className="notice">{error}</div>}
 
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Customer</th>
-            <th>Phone</th>
-            <th>Country</th>
-            <th>Status</th>
-            <th>Assigned</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {leads.map((lead) => (
-            <tr key={lead.id}>
-              <td>{lead.customerName}</td>
-              <td>{lead.phone}</td>
-              <td>{lead.country || "-"}</td>
-              <td>
-                <span className="badge">
-                  {statusLabelMap[lead.status] || lead.status}
-                </span>
-              </td>
-              <td>{lead.user?.name || "You"}</td>
-              <td>
-                <button className="button secondary" onClick={() => openModal(lead)}>
-                  Update
-                </button>
-              </td>
+      <div className="table-wrapper">
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Phone</th>
+              <th>Country</th>
+              <th>Status</th>
+              <th>Assigned</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {leads.map((lead) => (
+              <tr key={lead.id}>
+                <td>{lead.customerName}</td>
+                <td>{lead.phone}</td>
+                <td>{lead.country || "-"}</td>
+                <td>
+                  <span className="badge">
+                    {statusLabelMap[lead.status] || lead.status}
+                  </span>
+                </td>
+                <td>{lead.user?.name || "You"}</td>
+                <td>
+                  <button className="button secondary" onClick={() => openModal(lead)}>
+                    Update
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {selectedLead && (
         <div className="modal-backdrop" role="dialog" aria-modal="true">

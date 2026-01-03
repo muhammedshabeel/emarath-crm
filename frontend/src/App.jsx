@@ -55,7 +55,7 @@ const App = () => {
 
   if (!token || !user) {
     return (
-      <div className="app-shell">
+      <div className="login-shell">
         <LoginForm
           apiBaseUrl={API_BASE_URL}
           onLogin={(payload) => {

@@ -30,7 +30,7 @@ const LoginForm = ({ apiBaseUrl, onLogin, error, setError }) => {
   };
 
   return (
-    <div className="card" style={{ maxWidth: 420, margin: "0 auto" }}>
+    <div className="card login-card">
       <h2>Login</h2>
       <p className="muted">Enter your sales portal credentials.</p>
 
