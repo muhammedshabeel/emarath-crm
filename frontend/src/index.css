@@ -145,10 +145,14 @@ button {
 }
 
 .modal-content {
+  display: grid;
+  gap: 16px;
+}
+
+.modal-body {
   max-height: min(72vh, 560px);
   overflow-y: auto;
   padding-right: 4px;
-  padding-bottom: 16px;
   display: grid;
   gap: 16px;
 }

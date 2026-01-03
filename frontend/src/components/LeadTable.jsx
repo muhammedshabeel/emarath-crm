@@ -352,169 +352,175 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
                   )}
                 </div>
               )}
-              <div className="modal-grid">
-                <div className="modal-section stack">
-                  <div className="section-title">Lead details</div>
-                  <label className="stack">
-                    <span>Status</span>
-                    <select
-                      className="input"
-                      value={status}
-                      onChange={(event) => setStatus(event.target.value)}
-                    >
-                      {statusOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className="stack">
-                    <span>Phone 2 (optional)</span>
-                    <input
-                      className="input"
-                      value={phone2}
-                      onChange={(event) => setPhone2(event.target.value)}
-                    />
-                  </label>
-                  <label className="stack">
-                    <span>Remarks</span>
-                    <input
-                      className="input"
-                      value={remarks}
-                      onChange={(event) => setRemarks(event.target.value)}
-                      placeholder="Short note about the call"
-                    />
-                  </label>
-                </div>
+              <div className="modal-body">
+                <div className="modal-grid">
+                  <div className="modal-section stack">
+                    <div className="section-title">Lead details</div>
+                    <label className="stack">
+                      <span>Status</span>
+                      <select
+                        className="input"
+                        value={status}
+                        onChange={(event) => setStatus(event.target.value)}
+                      >
+                        {statusOptions.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="stack">
+                      <span>Phone 2 (optional)</span>
+                      <input
+                        className="input"
+                        value={phone2}
+                        onChange={(event) => setPhone2(event.target.value)}
+                      />
+                    </label>
+                    <label className="stack">
+                      <span>Remarks</span>
+                      <input
+                        className="input"
+                        value={remarks}
+                        onChange={(event) => setRemarks(event.target.value)}
+                        placeholder="Short note about the call"
+                      />
+                    </label>
+                  </div>
 
-                <div className="modal-section stack">
-                  <div className="section-title">Order</div>
-                  <div className="stack">
-                    <div className="section-title">Products & Qty</div>
-                    <div className="product-panel">
-                      <div className="product-panel-header">
-                        <input
-                          className="input"
-                          placeholder="Search products"
-                          value={productSearch}
-                          onChange={(event) => setProductSearch(event.target.value)}
-                        />
-                        <div className="product-summary muted">
-                          {selectedProductCount} selected · {totalProductQty} qty
+                  <div className="modal-section stack">
+                    <div className="section-title">Order</div>
+                    <div className="stack">
+                      <div className="section-title">Products & Qty</div>
+                      <div className="product-panel">
+                        <div className="product-panel-header">
+                          <input
+                            className="input"
+                            placeholder="Search products"
+                            value={productSearch}
+                            onChange={(event) => setProductSearch(event.target.value)}
+                          />
+                          <div className="product-summary muted">
+                            {selectedProductCount} selected · {totalProductQty} qty
+                          </div>
+                          <div className="product-selected">
+                            {selectedProducts.length > 0 ? (
+                              selectedProducts.map(({ name, qtyValue }) => (
+                                <span key={name} className="product-pill">
+                                  {name} × {qtyValue}
+                                </span>
+                              ))
+                            ) : (
+                              <span className="muted">No products selected yet.</span>
+                            )}
+                          </div>
                         </div>
-                        <div className="product-selected">
-                          {selectedProducts.length > 0 ? (
-                            selectedProducts.map(({ name, qtyValue }) => (
-                              <span key={name} className="product-pill">
-                                {name} × {qtyValue}
-                              </span>
-                            ))
-                          ) : (
-                            <span className="muted">No products selected yet.</span>
+                        <div className="product-list">
+                          {filteredProducts.map((option) => {
+                            const qtyValue = productQuantities[option] || 0;
+                            return (
+                              <div key={option} className="product-row">
+                                <span className="product-name">{option}</span>
+                                <div className="product-qty">
+                                  <button
+                                    type="button"
+                                    className="button secondary"
+                                    onClick={() => updateProductQty(option, -1)}
+                                  >
+                                    -
+                                  </button>
+                                  <span className="product-qty-value">
+                                    {qtyValue}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    className="button secondary"
+                                    onClick={() => updateProductQty(option, 1)}
+                                  >
+                                    +
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })}
+                          {filteredProducts.length === 0 && (
+                            <div className="product-empty muted">
+                              No products found.
+                            </div>
                           )}
                         </div>
                       </div>
-                      <div className="product-list">
-                        {filteredProducts.map((option) => {
-                          const qtyValue = productQuantities[option] || 0;
-                          return (
-                            <div key={option} className="product-row">
-                              <span className="product-name">{option}</span>
-                              <div className="product-qty">
-                                <button
-                                  type="button"
-                                  className="button secondary"
-                                  onClick={() => updateProductQty(option, -1)}
-                                >
-                                  -
-                                </button>
-                                <span className="product-qty-value">{qtyValue}</span>
-                                <button
-                                  type="button"
-                                  className="button secondary"
-                                  onClick={() => updateProductQty(option, 1)}
-                                >
-                                  +
-                                </button>
-                              </div>
-                            </div>
-                          );
-                        })}
-                        {filteredProducts.length === 0 && (
-                          <div className="product-empty muted">No products found.</div>
-                        )}
-                      </div>
+                    </div>
+                    <div className="form-grid">
+                      <label className="stack">
+                        <span>Payment Method</span>
+                        <input
+                          className="input"
+                          value={paymentMethod}
+                          onChange={(event) => setPaymentMethod(event.target.value)}
+                        />
+                      </label>
+                      <label className="stack">
+                        <span>Value</span>
+                        <input
+                          className="input"
+                          type="number"
+                          value={value}
+                          onChange={(event) => setValue(event.target.value)}
+                        />
+                      </label>
                     </div>
                   </div>
-                  <div className="form-grid">
-                    <label className="stack">
-                      <span>Payment Method</span>
-                      <input
-                        className="input"
-                        value={paymentMethod}
-                        onChange={(event) => setPaymentMethod(event.target.value)}
-                      />
-                    </label>
-                    <label className="stack">
-                      <span>Value</span>
-                      <input
-                        className="input"
-                        type="number"
-                        value={value}
-                        onChange={(event) => setValue(event.target.value)}
-                      />
-                    </label>
-                  </div>
-                </div>
 
-                <div className="modal-section stack">
-                  <div className="section-title">Shipping & follow-up</div>
-                  <label className="stack">
-                    <span>City</span>
-                    <input
-                      className="input"
-                      value={city}
-                      onChange={(event) => setCity(event.target.value)}
-                    />
-                  </label>
-                  <label className="stack">
-                    <span>Address</span>
-                    <textarea
-                      className="input"
-                      rows={2}
-                      value={address}
-                      onChange={(event) => setAddress(event.target.value)}
-                    />
-                  </label>
-                  <label className="stack">
-                    <span>Notes</span>
-                    <textarea
-                      className="input"
-                      rows={2}
-                      value={notes}
-                      onChange={(event) => setNotes(event.target.value)}
-                    />
-                  </label>
-                  <div className="form-grid">
+                  <div className="modal-section stack">
+                    <div className="section-title">Shipping & follow-up</div>
                     <label className="stack">
-                      <span>Date shipment</span>
+                      <span>City</span>
                       <input
                         className="input"
-                        type="date"
-                        value={shipmentDate}
-                        onChange={(event) => setShipmentDate(event.target.value)}
+                        value={city}
+                        onChange={(event) => setCity(event.target.value)}
                       />
                     </label>
                     <label className="stack">
-                      <span>Next Follow-up</span>
-                      <input
+                      <span>Address</span>
+                      <textarea
                         className="input"
-                        type="date"
-                        value={followUp}
-                        onChange={(event) => setFollowUp(event.target.value)}
+                        rows={2}
+                        value={address}
+                        onChange={(event) => setAddress(event.target.value)}
                       />
                     </label>
+                    <label className="stack">
+                      <span>Notes</span>
+                      <textarea
+                        className="input"
+                        rows={2}
+                        value={notes}
+                        onChange={(event) => setNotes(event.target.value)}
+                      />
+                    </label>
+                    <div className="form-grid">
+                      <label className="stack">
+                        <span>Date shipment</span>
+                        <input
+                          className="input"
+                          type="date"
+                          value={shipmentDate}
+                          onChange={(event) => setShipmentDate(event.target.value)}
+                        />
+                      </label>
+                      <label className="stack">
+                        <span>Next Follow-up</span>
+                        <input
+                          className="input"
+                          type="date"
+                          value={followUp}
+                          onChange={(event) => setFollowUp(event.target.value)}
+                        />
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>
