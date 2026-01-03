@@ -124,6 +124,7 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
     setSelectedLead(lead);
     setStatus(lead.status || "INITIAL_CONTACT");
     setRemarks("");
+    setError("");
     setPhone2(lead.phone2 || "");
     setCountry(lead.country || "");
     const selectedProducts = lead.product
@@ -149,12 +150,14 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
       lead.shipmentDate ? lead.shipmentDate.slice(0, 10) : ""
     );
     setFollowUp(lead.followUp ? lead.followUp.slice(0, 10) : "");
+    setError("");
     setModalError("");
     setMissingFields([]);
   };
 
   const closeModal = () => {
     setSelectedLead(null);
+    setError("");
     setModalError("");
     setMissingFields([]);
   };
