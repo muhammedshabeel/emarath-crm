@@ -4,6 +4,7 @@
   "description": "Emarath sales system backend",
   "main": "src/index.js",
   "scripts": {
+    "predev": "git -C .. pull --rebase || true",
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
     "prisma:generate": "prisma generate",
