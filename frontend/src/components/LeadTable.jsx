@@ -96,6 +96,7 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
   const [shipmentDate, setShipmentDate] = useState("");
   const [followUp, setFollowUp] = useState("");
   const [error, setError] = useState("");
+  const [missingFields, setMissingFields] = useState([]);
 
   const loadLeads = async () => {
     try {
@@ -147,6 +148,8 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
       lead.shipmentDate ? lead.shipmentDate.slice(0, 10) : ""
     );
     setFollowUp(lead.followUp ? lead.followUp.slice(0, 10) : "");
+    setError("");
+    setMissingFields([]);
   };
 
   const closeModal = () => {
@@ -173,12 +176,14 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
       if (!paymentMethod) missingFields.push("Payment Method");
 
       if (missingFields.length > 0) {
-        setError(`Fill required fields for Won: ${missingFields.join(", ")}`);
+        setError("Fill required fields for Won.");
+        setMissingFields(missingFields);
         return;
       }
     }
 
     try {
+      setMissingFields([]);
       const normalizedProducts = Object.entries(productQuantities)
         .filter(([, qtyValue]) => Number(qtyValue) > 0)
         .map(([name, qtyValue]) => `${name} x${qtyValue}`)
@@ -219,6 +224,7 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
       closeModal();
     } catch (err) {
       setError(err.message);
+      setMissingFields([]);
     }
   };
 
@@ -288,7 +294,7 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
         </div>
       </div>
 
-      {error && <div className="notice">{error}</div>}
+      {error && !selectedLead && <div className="notice">{error}</div>}
 
       <table className="table">
         <thead>
@@ -334,6 +340,18 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
               <div className="modal-pill muted">Lead update</div>
             </div>
             <div className="modal-content">
+              {error && (
+                <div className="notice modal-notice">
+                  <div>{error}</div>
+                  {missingFields.length > 0 && (
+                    <ul className="notice-list">
+                      {missingFields.map((field) => (
+                        <li key={field}>{field}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
               <div className="modal-grid">
                 <div className="modal-section stack">
                   <div className="section-title">Lead details</div>
