@@ -121,9 +121,53 @@ button {
   box-shadow: 0 20px 40px rgba(15, 23, 42, 0.2);
 }
 
+.modal-content {
+  max-height: min(70vh, 520px);
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
 .stack {
   display: grid;
   gap: 12px;
+}
+
+.form-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.qty-control {
+  display: grid;
+  grid-template-columns: 40px 1fr 40px;
+  gap: 8px;
+  align-items: center;
+}
+
+.qty-control .button {
+  padding: 8px 0;
+}
+
+.product-grid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.product-chip {
+  border: 1px solid #cbd5f5;
+  border-radius: 999px;
+  background: #f8fafc;
+  padding: 8px 12px;
+  font-size: 12px;
+  text-align: left;
+}
+
+.product-chip.selected {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  color: #ffffff;
 }
 
 .muted {

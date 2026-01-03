@@ -13,6 +13,67 @@ const statusOptions = [
   { value: "CANCELLED", label: "Cancelled" }
 ];
 
+const productOptions = [
+  "MAQAM IBRAHIM-BSPARQ",
+  "ESENCIA FLORAL",
+  "ROMANCY FLORAL",
+  "PEACOCK COLLECTION",
+  "SUFI COMBO",
+  "SEVEN DAYS-RT",
+  "6 PS PERFUME COMPO",
+  "FERRAGAMO&SUFI COMPO",
+  "7 PS COMBO",
+  "DOE COLLECTION",
+  "NEW 6 PS COMBO",
+  "MARYAM BODY LOTION",
+  "MUSK COLLECTION",
+  "FERRAGAMO+RIVIERA COMBO",
+  "MARYAM COMBO",
+  "FERRAGAMO",
+  "ITALIAN CITRUS",
+  "MYSTERY COMBO",
+  "AMBER",
+  "SALTY FLOWER",
+  "LAROCHE",
+  "SR SIGNATURE",
+  "AMEERATH UL ARAB",
+  "ESENCIA CUSTOMIZE",
+  "BLACK EXCESS",
+  "MOJEH",
+  "SAPIL COMBO",
+  "DOLLER COMBO",
+  "NEW 7PS COMBO",
+  "INTENSE SIGNATURE-LPG",
+  "OUD LOVERS-LPG",
+  "AMBER +SENSUAL",
+  "CLIVE COLLECTION",
+  "VOLGA COMBO",
+  "OLD MEMORIES-RT",
+  "COOL LIFE COMBO",
+  "PARAMOUNT COMBO",
+  "DOE CUSTOMIZE",
+  "AMBER CUSTOMIZE",
+  "AMEERATH CUSTOMIZE",
+  "CLIVE CUSTOMIZE",
+  "LA FLORAL-LPG",
+  "THE ARCHER COMBO",
+  "SHADOW FLAME",
+  "AMBRE + ONIRO",
+  "AMBER + BLACK EXCESS",
+  "CLASSIC LIME",
+  "CHERIE BLOSSOM -LPG",
+  "VELORA POP HEART-LPG",
+  "VELORA VIVA CHOCO-LPG",
+  "VELORA SUGAR BLISS-LPG",
+  "DIAMOND ROSE COMBO",
+  "MUKHALAT AL EMARAT-BSPARQ",
+  "BERRIES WEEKEND COMBO",
+  "ASEEL COMBO",
+  "MIRAMAR COMBO",
+  "HECTOR COMBO",
+  "VELORA-LPG"
+];
+
 const statusLabelMap = statusOptions.reduce((accumulator, option) => {
   accumulator[option.value] = option.label;
   return accumulator;
@@ -25,7 +86,7 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
   const [remarks, setRemarks] = useState("");
   const [phone2, setPhone2] = useState("");
   const [country, setCountry] = useState("");
-  const [product, setProduct] = useState("");
+  const [product, setProduct] = useState([]);
   const [qty, setQty] = useState("");
   const [notes, setNotes] = useState("");
   const [city, setCity] = useState("");
@@ -63,7 +124,10 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
     setRemarks("");
     setPhone2(lead.phone2 || "");
     setCountry(lead.country || "");
-    setProduct(lead.product || "");
+    const selectedProducts = lead.product
+      ? lead.product.split(",").map((item) => item.trim()).filter(Boolean)
+      : [];
+    setProduct(selectedProducts);
     setQty(lead.qty ?? "");
     setNotes(lead.notes || "");
     setCity(lead.city || "");
@@ -87,7 +151,7 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
 
     if (status === "WON") {
       const missingFields = [];
-      if (!product) missingFields.push("Product");
+      if (product.length === 0) missingFields.push("Product");
       if (!qty) missingFields.push("Qty");
       if (!notes) missingFields.push("Notes");
       if (!city) missingFields.push("City");
@@ -102,6 +166,7 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
     }
 
     try {
+      const normalizedProducts = product.join(", ");
       const response = await fetch(
         `${apiBaseUrl}/leads/${selectedLead.id}/activity`,
         {
@@ -112,7 +177,7 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
             remarks,
             phone2,
             country,
-            product,
+            product: normalizedProducts,
             qty: qty ? Number(qty) : null,
             notes,
             city,
@@ -135,6 +200,21 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
     } catch (err) {
       setError(err.message);
     }
+  };
+
+  const toggleProduct = (value) => {
+    setProduct((prev) => {
+      if (prev.includes(value)) {
+        return prev.filter((item) => item !== value);
+      }
+      return [...prev, value];
+    });
+  };
+
+  const changeQty = (delta) => {
+    const current = Number(qty || 0);
+    const next = Math.max(0, current + delta);
+    setQty(next === 0 ? "" : next);
   };
 
   const handleExport = async () => {
@@ -219,7 +299,7 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
           <div className="modal">
             <h3>Update Lead</h3>
             <p className="muted">{selectedLead.customerName}</p>
-            <div className="stack">
+            <div className="stack modal-content">
               <label className="stack">
                 <span>Status</span>
                 <select
@@ -242,51 +322,80 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
                   onChange={(event) => setPhone2(event.target.value)}
                 />
               </label>
+              <div className="form-grid">
+                <label className="stack">
+                  <span>Country</span>
+                  <input
+                    className="input"
+                    value={country}
+                    onChange={(event) => setCountry(event.target.value)}
+                  />
+                </label>
+                <label className="stack">
+                  <span>Qty</span>
+                  <div className="qty-control">
+                    <button
+                      type="button"
+                      className="button secondary"
+                      onClick={() => changeQty(-1)}
+                    >
+                      -
+                    </button>
+                    <input
+                      className="input"
+                      type="number"
+                      min="0"
+                      value={qty}
+                      onChange={(event) => setQty(event.target.value)}
+                    />
+                    <button
+                      type="button"
+                      className="button secondary"
+                      onClick={() => changeQty(1)}
+                    >
+                      +
+                    </button>
+                  </div>
+                </label>
+              </div>
               <label className="stack">
-                <span>Country</span>
-                <input
-                  className="input"
-                  value={country}
-                  onChange={(event) => setCountry(event.target.value)}
-                />
+                <span>Product (select multiple)</span>
+                <div className="product-grid">
+                  {productOptions.map((option) => (
+                    <button
+                      key={option}
+                      type="button"
+                      className={`product-chip${product.includes(option) ? " selected" : ""}`}
+                      onClick={() => toggleProduct(option)}
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
               </label>
-              <label className="stack">
-                <span>Product</span>
-                <input
-                  className="input"
-                  value={product}
-                  onChange={(event) => setProduct(event.target.value)}
-                />
-              </label>
-              <label className="stack">
-                <span>Qty</span>
-                <input
-                  className="input"
-                  type="number"
-                  value={qty}
-                  onChange={(event) => setQty(event.target.value)}
-                />
-              </label>
-              <label className="stack">
-                <span>Notes</span>
-                <input
-                  className="input"
-                  value={notes}
-                  onChange={(event) => setNotes(event.target.value)}
-                />
-              </label>
-              <label className="stack">
-                <span>City</span>
-                <input
-                  className="input"
-                  value={city}
-                  onChange={(event) => setCity(event.target.value)}
-                />
-              </label>
+              <div className="form-grid">
+                <label className="stack">
+                  <span>City</span>
+                  <input
+                    className="input"
+                    value={city}
+                    onChange={(event) => setCity(event.target.value)}
+                  />
+                </label>
+                <label className="stack">
+                  <span>Payment Method</span>
+                  <input
+                    className="input"
+                    value={paymentMethod}
+                    onChange={(event) => setPaymentMethod(event.target.value)}
+                  />
+                </label>
+              </div>
               <label className="stack">
                 <span>Address</span>
-                <input
+                <textarea
                   className="input"
+                  rows={2}
                   value={address}
                   onChange={(event) => setAddress(event.target.value)}
                 />
@@ -301,6 +410,15 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
                 />
               </label>
               <label className="stack">
+                <span>Notes</span>
+                <textarea
+                  className="input"
+                  rows={2}
+                  value={notes}
+                  onChange={(event) => setNotes(event.target.value)}
+                />
+              </label>
+              <label className="stack">
                 <span>Value</span>
                 <input
                   className="input"
@@ -309,32 +427,26 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
                   onChange={(event) => setValue(event.target.value)}
                 />
               </label>
-              <label className="stack">
-                <span>Payment Method</span>
-                <input
-                  className="input"
-                  value={paymentMethod}
-                  onChange={(event) => setPaymentMethod(event.target.value)}
-                />
-              </label>
-              <label className="stack">
-                <span>Date shipment</span>
-                <input
-                  className="input"
-                  type="date"
-                  value={shipmentDate}
-                  onChange={(event) => setShipmentDate(event.target.value)}
-                />
-              </label>
-              <label className="stack">
-                <span>Next Follow-up</span>
-                <input
-                  className="input"
-                  type="date"
-                  value={followUp}
-                  onChange={(event) => setFollowUp(event.target.value)}
-                />
-              </label>
+              <div className="form-grid">
+                <label className="stack">
+                  <span>Date shipment</span>
+                  <input
+                    className="input"
+                    type="date"
+                    value={shipmentDate}
+                    onChange={(event) => setShipmentDate(event.target.value)}
+                  />
+                </label>
+                <label className="stack">
+                  <span>Next Follow-up</span>
+                  <input
+                    className="input"
+                    type="date"
+                    value={followUp}
+                    onChange={(event) => setFollowUp(event.target.value)}
+                  />
+                </label>
+              </div>
               <div className="actions">
                 <button className="button" onClick={submitUpdate}>
                   Save Update
