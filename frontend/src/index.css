@@ -114,7 +114,7 @@ button {
 }
 
 .modal {
-  width: min(520px, 100%);
+  width: min(92vw, 760px);
   background: #ffffff;
   border-radius: 16px;
   padding: 24px;
@@ -122,7 +122,7 @@ button {
 }
 
 .modal-content {
-  max-height: min(70vh, 520px);
+  max-height: min(72vh, 560px);
   overflow-y: auto;
   padding-right: 4px;
 }
@@ -153,6 +153,21 @@ button {
   display: grid;
   gap: 8px;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+@media (max-width: 720px) {
+  .modal {
+    width: min(96vw, 640px);
+    padding: 20px;
+  }
+
+  .qty-control {
+    grid-template-columns: 36px 1fr 36px;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
 }
 
 .product-chip {
