@@ -144,7 +144,7 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
     setShipmentDate(
       lead.shipmentDate ? lead.shipmentDate.slice(0, 10) : ""
     );
-    setFollowUp("");
+    setFollowUp(lead.followUp ? lead.followUp.slice(0, 10) : "");
   };
 
   const closeModal = () => {
