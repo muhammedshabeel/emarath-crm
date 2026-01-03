@@ -96,6 +96,7 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
   const [shipmentDate, setShipmentDate] = useState("");
   const [followUp, setFollowUp] = useState("");
   const [error, setError] = useState("");
+  const [modalError, setModalError] = useState("");
   const [missingFields, setMissingFields] = useState([]);
 
   const loadLeads = async () => {
@@ -148,12 +149,14 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
       lead.shipmentDate ? lead.shipmentDate.slice(0, 10) : ""
     );
     setFollowUp(lead.followUp ? lead.followUp.slice(0, 10) : "");
-    setError("");
+    setModalError("");
     setMissingFields([]);
   };
 
   const closeModal = () => {
     setSelectedLead(null);
+    setModalError("");
+    setMissingFields([]);
   };
 
   const submitUpdate = async () => {
@@ -176,7 +179,7 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
       if (!paymentMethod) missingFields.push("Payment Method");
 
       if (missingFields.length > 0) {
-        setError("Fill required fields for Won.");
+        setModalError("Fill required fields for Won.");
         setMissingFields(missingFields);
         return;
       }
@@ -184,6 +187,7 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
 
     try {
       setMissingFields([]);
+      setModalError("");
       const normalizedProducts = Object.entries(productQuantities)
         .filter(([, qtyValue]) => Number(qtyValue) > 0)
         .map(([name, qtyValue]) => `${name} x${qtyValue}`)
@@ -223,7 +227,7 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
       await loadLeads();
       closeModal();
     } catch (err) {
-      setError(err.message);
+      setModalError(err.message);
       setMissingFields([]);
     }
   };
@@ -342,9 +346,9 @@ const LeadTable = ({ apiBaseUrl, headers, isAdmin = false }) => {
               <div className="modal-pill muted">Lead update</div>
             </div>
             <div className="modal-content">
-              {error && (
+              {modalError && (
                 <div className="notice modal-notice">
-                  <div>{error}</div>
+                  <div>{modalError}</div>
                   {missingFields.length > 0 && (
                     <ul className="notice-list">
                       {missingFields.map((field) => (

@@ -58,6 +58,7 @@ button {
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .page-title {
@@ -75,6 +76,7 @@ button {
   border-radius: 12px;
   padding: 22px;
   box-shadow: 0 16px 32px rgba(15, 23, 42, 0.08);
+  width: 100%;
 }
 
 .grid {
