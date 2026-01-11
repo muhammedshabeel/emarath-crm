@@ -46,20 +46,29 @@ const isAllowedOrigin = (origin) => {
   });
 };
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (isAllowedOrigin(origin)) {
-        callback(null, true);
-        return;
-      }
-      console.warn(`CORS blocked for origin: ${origin}`);
-      callback(null, false);
-    },
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
-  })
-);
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (isAllowedOrigin(origin)) {
+      callback(null, true);
+      return;
+    }
+    console.warn(`CORS blocked for origin: ${origin}`);
+    callback(null, false);
+  },
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  optionsSuccessStatus: 204
+};
+
+app.use((req, res, next) => {
+  if (req.method !== "OPTIONS") {
+    next();
+    return;
+  }
+
+  cors(corsOptions)(req, res, () => res.sendStatus(204));
+});
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.get("/health", (req, res) => {
