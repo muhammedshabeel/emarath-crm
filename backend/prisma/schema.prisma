@@ -46,6 +46,8 @@ model Lead {
   customerName   String
   phone          String
   source         String?
+  externalId     String?        @unique
+  metadata       Json?
   assignedTo     String
   status         LeadStatus     @default(NEW)
   lastActivityAt DateTime?
@@ -55,6 +57,36 @@ model Lead {
   updatedAt      DateTime       @updatedAt
 
   @@index([assignedTo])
+  @@index([status])
+}
+
+model Vendor {
+  id          String          @id @default(uuid())
+  name        String
+  contactName String?
+  email       String?
+  phone       String?
+  status      Status          @default(ACTIVE)
+  products    VendorProduct[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@index([status])
+}
+
+model VendorProduct {
+  id          String   @id @default(uuid())
+  vendorId    String
+  name        String
+  sku         String?
+  price       Float?
+  description String?
+  status      Status   @default(ACTIVE)
+  vendor      Vendor   @relation(fields: [vendorId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([vendorId])
   @@index([status])
 }
 
