@@ -6,6 +6,8 @@ const authRoutes = require("./routes/auth");
 const leadRoutes = require("./routes/leads");
 const exportRoutes = require("./routes/export");
 const analyticsRoutes = require("./routes/analytics");
+const vendorRoutes = require("./routes/vendors");
+const doubleTickRoutes = require("./routes/doubletick");
 
 dotenv.config();
 
@@ -79,6 +81,8 @@ app.use("/auth", authRoutes);
 app.use("/leads", leadRoutes);
 app.use("/export", exportRoutes);
 app.use("/analytics", analyticsRoutes);
+app.use("/vendors", vendorRoutes);
+app.use("/integrations/doubletick", doubleTickRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err);
