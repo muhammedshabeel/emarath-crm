@@ -55,7 +55,7 @@ const App = () => {
 
   if (!token || !user) {
     return (
-      <div className="app-shell">
+      <div className="app-shell login-screen">
         <LoginForm
           apiBaseUrl={API_BASE_URL}
           onLogin={(payload) => {
@@ -73,28 +73,30 @@ const App = () => {
 
   return (
     <div className="app-shell">
-      <div className="header">
-        <div>
-          <h1>Emarath Sales Portal</h1>
-          <p className="muted">
-            Logged in as {user.name} ({user.role.toLowerCase()})
-          </p>
+      <div className="container">
+        <div className="header">
+          <div>
+            <h1>Emarath CRM Suite</h1>
+            <p className="muted">
+              Logged in as {user.name} ({user.role.toLowerCase()})
+            </p>
+          </div>
+          <button className="button secondary" onClick={handleLogout}>
+            Logout
+          </button>
         </div>
-        <button className="button secondary" onClick={handleLogout}>
-          Logout
-        </button>
+
+        {error && <div className="notice">{error}</div>}
+
+        {user.role === "ADMIN" ? (
+          <div className="stack">
+            <AdminAnalytics apiBaseUrl={API_BASE_URL} headers={authHeaders} />
+            <LeadTable apiBaseUrl={API_BASE_URL} headers={authHeaders} isAdmin />
+          </div>
+        ) : (
+          <LeadTable apiBaseUrl={API_BASE_URL} headers={authHeaders} />
+        )}
       </div>
-
-      {error && <div className="notice">{error}</div>}
-
-      {user.role === "ADMIN" ? (
-        <div className="stack">
-          <AdminAnalytics apiBaseUrl={API_BASE_URL} headers={authHeaders} />
-          <LeadTable apiBaseUrl={API_BASE_URL} headers={authHeaders} isAdmin />
-        </div>
-      ) : (
-        <LeadTable apiBaseUrl={API_BASE_URL} headers={authHeaders} />
-      )}
     </div>
   );
 };

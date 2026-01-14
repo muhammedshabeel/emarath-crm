@@ -30,9 +30,21 @@ const LoginForm = ({ apiBaseUrl, onLogin, error, setError }) => {
   };
 
   return (
-    <div className="card" style={{ maxWidth: 420, margin: "0 auto" }}>
-      <h2>Login</h2>
-      <p className="muted">Enter your sales portal credentials.</p>
+    <div className="card login-card">
+      <div className="login-brand">
+        <div className="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="2" />
+            <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="2" />
+            <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="2" />
+            <rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="2" />
+          </svg>
+        </div>
+        <div>
+          <h2>CRM Suite</h2>
+          <p className="login-subtitle">Sign in to access your CRM dashboard</p>
+        </div>
+      </div>
 
       {error && <div className="notice">{error}</div>}
 
@@ -59,9 +71,13 @@ const LoginForm = ({ apiBaseUrl, onLogin, error, setError }) => {
           />
         </label>
         <button className="button" type="submit" disabled={loading}>
-          {loading ? "Signing in..." : "Login"}
+          {loading ? "Signing in..." : "Continue"}
         </button>
       </form>
+      <div className="login-divider">Secure Access</div>
+      <p className="login-footer">
+        By signing in, you agree to our Terms of Service and Privacy Policy.
+      </p>
     </div>
   );
 };

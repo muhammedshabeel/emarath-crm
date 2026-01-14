@@ -5,7 +5,7 @@
   font-weight: 400;
   color-scheme: light;
   color: #0f172a;
-  background-color: #f8fafc;
+  background-color: #f5f5f5;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -18,7 +18,7 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: #f1f5f9;
+  background: #f5f5f5;
 }
 
 a {
@@ -51,8 +51,20 @@ textarea {
   min-height: 100vh;
 }
 
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-shell.login-screen {
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
 .container {
-  max-width: 1100px;
+  width: min(1200px, 100%);
   margin: 0 auto;
   padding: 32px 24px 64px;
 }
@@ -72,9 +84,10 @@ textarea {
 
 .card {
   background: #ffffff;
-  border-radius: 16px;
+  border-radius: 20px;
   padding: 24px;
-  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 30px 60px rgba(15, 23, 42, 0.12);
+  border: 1px solid #eef0f3;
 }
 
 .table {
@@ -100,9 +113,9 @@ textarea {
 }
 
 .input {
-  border-radius: 10px;
-  border: 1px solid #cbd5f5;
-  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid #d5d8de;
+  padding: 12px 14px;
   font-size: 14px;
   background: #ffffff;
   width: 100%;
@@ -123,16 +136,17 @@ textarea.input {
 }
 
 .button {
-  border-radius: 10px;
-  padding: 10px 16px;
+  border-radius: 12px;
+  padding: 12px 18px;
   font-weight: 600;
-  background: #1d4ed8;
+  background: #0f1115;
   color: #fff;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .button.secondary {
-  background: #e2e8f0;
-  color: #0f172a;
+  background: #f0f1f3;
+  color: #111827;
 }
 
 .button.danger {
@@ -311,10 +325,70 @@ textarea.input {
 
 .notice {
   padding: 12px 16px;
-  border-radius: 12px;
-  background: #fee2e2;
-  color: #991b1b;
+  border-radius: 14px;
+  background: #fff2f2;
+  color: #8c1c1c;
   margin-bottom: 16px;
+}
+
+.login-card {
+  width: min(440px, 100%);
+  text-align: center;
+  padding: 32px 32px 24px;
+}
+
+.login-brand {
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+  margin-bottom: 20px;
+}
+
+.brand-mark {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: #0f1115;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 12px 20px rgba(15, 23, 42, 0.2);
+}
+
+.brand-mark svg {
+  width: 26px;
+  height: 26px;
+  color: #fff;
+}
+
+.login-subtitle {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.login-footer {
+  margin-top: 18px;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.login-divider {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 10px;
+  color: #9ca3af;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 16px 0;
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: "";
+  height: 1px;
+  background: #e5e7eb;
+  display: block;
 }
 
 @media (max-width: 720px) {
