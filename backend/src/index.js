@@ -6,6 +6,18 @@ const authRoutes = require("./routes/auth");
 const leadRoutes = require("./routes/leads");
 const exportRoutes = require("./routes/export");
 const analyticsRoutes = require("./routes/analytics");
+const vendorRoutes = require("./routes/vendors");
+const doubleTickRoutes = require("./routes/doubletick");
+const staffRoutes = require("./routes/staff");
+const productRoutes = require("./routes/products");
+const customerRoutes = require("./routes/customers");
+const orderRoutes = require("./routes/orders");
+const orderItemRoutes = require("./routes/orderItems");
+const paymentRoutes = require("./routes/payments");
+const complaintRoutes = require("./routes/complaints");
+const feedbackRoutes = require("./routes/customerFeedback");
+const followupRoutes = require("./routes/deliveryFollowups");
+const emSeriesRoutes = require("./routes/emSeries");
 
 dotenv.config();
 
@@ -79,6 +91,18 @@ app.use("/auth", authRoutes);
 app.use("/leads", leadRoutes);
 app.use("/export", exportRoutes);
 app.use("/analytics", analyticsRoutes);
+app.use("/vendors", vendorRoutes);
+app.use("/integrations/doubletick", doubleTickRoutes);
+app.use("/staff", staffRoutes);
+app.use("/products", productRoutes);
+app.use("/customers", customerRoutes);
+app.use("/orders", orderRoutes);
+app.use("/order-items", orderItemRoutes);
+app.use("/payments", paymentRoutes);
+app.use("/complaints", complaintRoutes);
+app.use("/feedback", feedbackRoutes);
+app.use("/delivery-followups", followupRoutes);
+app.use("/em-series", emSeriesRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err);

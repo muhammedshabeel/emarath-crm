@@ -2,6 +2,12 @@ const express = require("express");
 const prisma = require("../prisma");
 const authenticate = require("../middlewares/auth");
 const requireRole = require("../middlewares/requireRole");
+const {
+  parseBoolean,
+  parseDate,
+  parseFloatOrNull,
+  parseIntOrNull
+} = require("../utils/parse");
 
 const router = express.Router();
 router.use(authenticate);
@@ -23,14 +29,68 @@ router.get("/", requireRole("ADMIN"), async (req, res) => {
 });
 
 router.post("/", requireRole("ADMIN"), async (req, res) => {
-  const { customerName, phone, source, assignedTo } = req.body;
+  const {
+    customerName,
+    phone,
+    source,
+    assignedTo,
+    airtableLeadId,
+    leadDate,
+    country,
+    customerPath,
+    customerId,
+    assignedStaffId,
+    leadSource,
+    adSource,
+    language,
+    city,
+    address,
+    product1,
+    qty1,
+    product2,
+    qty2,
+    value,
+    reason,
+    notes,
+    dispatchFlag,
+    paymentMethod,
+    csRemarks,
+    status
+  } = req.body;
 
   if (!customerName || !phone || !assignedTo) {
     return res.status(400).json({ message: "Missing required fields." });
   }
 
   const lead = await prisma.lead.create({
-    data: { customerName, phone, source, assignedTo }
+    data: {
+      customerName,
+      phone,
+      source,
+      assignedTo,
+      airtableLeadId,
+      leadDate: parseDate(leadDate),
+      country,
+      customerPath,
+      customerId,
+      assignedStaffId,
+      leadSource,
+      adSource,
+      language,
+      city,
+      address,
+      product1,
+      qty1: parseIntOrNull(qty1),
+      product2,
+      qty2: parseIntOrNull(qty2),
+      value: parseFloatOrNull(value),
+      reason,
+      notes,
+      dispatchFlag: parseBoolean(dispatchFlag),
+      paymentMethod,
+      csRemarks,
+      status
+    }
   });
 
   return res.status(201).json(lead);
